@@ -85,7 +85,7 @@
 		overflow:hidden;
 	}
 
-	.li li.done label{
+	.list li.done label{
 		color: #d9d9d9;
 		text-decoration: line-through
 	}
@@ -110,18 +110,18 @@
 		
 		<section class="panel">
 		
-			<input type="checkbox" id="mark-all">
+			<input type="checkbox" id="mark-all" v-bind:checked="areAllSelected" v-on:click="selectAll">
 			<input type="text" placeholder="Hvað þarftu að gera?" autofocus class="text-input" v-model="newTask" v-on:keyup.enter="addTask">
-			<button>Clear List</button>		
+			<button v-on:click="clearList()">Clear List</button>		
 
 		</section>
 
 		<ul class="list">
 			
-			<li v-for="task in taskList">
-				<input type="checkbox" class="checkbox">
-				<label for="checkbox">{{ task.text }}</label>
-				<button class="delete">X</button>
+			<li v-for="task in taskList" v-bind:class="{done: task.checked}">
+				<input type="checkbox" class="checkbox" v-model="task.checked">
+				<label for="checkbox">{{task.text}}</label>
+				<button class="delete" v-on:click="removeTask()">X</button>
 			
 			</li>
 
@@ -150,8 +150,29 @@
 					});
 					this.newTask = ""
 				}
+			},
+			removeTask: function() {
+				var index = this.taskList.indexOf(this.task); 
+				this.taskList.splice(index, 1);
+			},
+			clearList: function() {
+				this.taskList = []
+			},
+			selectAll: function() {
+				var targetValue = this.areAllSelected ? false : true;
+				for(var i = 0; i < this.taskList.length; i++) {
+					this.taskList[i].checked = targetValue
+				}
 			}
 
+		},
+		computed: {
+			areAllSelected: function() {
+				return this.taskList.every(function(task) {
+					return task.checked;
+
+				}) && this.taskList.length > 0
+			}
 		}
 	})
 
