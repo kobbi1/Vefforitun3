@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<style type="text/css">
+		a{
+			display: block;
+		}
+	</style>
+</head>
+	<body>
+		<div id="app">
+			<!--<a v-for = "link in anchors" :href="link" v-text = "link"></a>-->
+			<a v-for = "link in anchors" @click.prevent="handleClick(link)" :href="link.url" v-text = "link.url"></a>
+			<p>Virki linkurinn er {{ Clicked }}</p>
+		</div>
+			<script src="https://unpkg.com/vue"></script>
+			<script type="text/javascript">
+				var app = new Vue({
+					el: "#app",
+					data: {
+						anchors:[
+							{name:"google", url:'https://www.google.is'},
+							{name:"visir", url:'http://www.visir.is'},
+							{name:"fotbolti", url:'http://www.fotbolti.is'},
+							{name:"facebook", url:'http://www.facebook.is'},
+						],
+						Clicked: ""
+					},
+					methods:{
+						handleClick:function(link){
+							this.Clicked = link.name;	
+						//you can also prevent the link from activating with event.preventDefault();
+						}
+					}
+				});
+			</script>
+	</body>
+</html>

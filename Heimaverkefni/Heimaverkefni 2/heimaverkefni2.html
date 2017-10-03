@@ -120,8 +120,10 @@
 			
 			<li v-for="task in taskList" v-bind:class="{done: task.checked}">
 				<input type="checkbox" class="checkbox" v-model="task.checked">
-				<label for="checkbox">{{task.text}}</label>
-				<button class="delete" v-on:click="removeTask()">X</button>
+				<input type="text" class="text-input" v-model="task.text" v-show="task.isChanging" v-on:keyup.enter="commitText(task)">
+				<label type="text" for="checkbox" v-text="task.text" v-show="!task.isChanging" v-on:click="editText(task)"></label>
+				<!-- <button class="delete" v-on:click="removeTask()">X</button> -->
+				<Buttondelete></Buttondelete>
 			
 			</li>
 
@@ -134,23 +136,51 @@
 
 <script src="https://unpkg.com/vue"></script>
 <script type="text/javascript">
+
+window.onload = function() {
+
+
+
+	Vue.component("Buttondelete", {
+		template:`
+
+			<button class="delete" v-on:click="removeTask()">X</button>
+		`
+	})
+
+
 	var app = new Vue({
 		el: "#app",
 		data: {
 			newTask: "",
-			taskList: []
+			taskList: [],
+			
 		},
+
+
 		methods: {
 			addTask: function() {
 				var task = this.newTask.trim();
 				if(task != "") {
 					this.taskList.push({
 						text:task,
-						checked: false
+						checked: false,
+						isChanging: false,
+
 					});
 					this.newTask = ""
 				}
 			},
+			editText: function(task) {
+				task.isChanging = true
+				
+
+			},
+
+			commitText: function(task) {
+				task.isChanging = false;
+			},
+
 			removeTask: function() {
 				var index = this.taskList.indexOf(this.task); 
 				this.taskList.splice(index, 1);
@@ -164,7 +194,6 @@
 					this.taskList[i].checked = targetValue
 				}
 			}
-
 		},
 		computed: {
 			areAllSelected: function() {
@@ -175,6 +204,8 @@
 			}
 		}
 	})
+
+}
 
 
 </script>
