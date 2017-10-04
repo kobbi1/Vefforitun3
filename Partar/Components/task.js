@@ -4,7 +4,7 @@ Vue.component("task-list", {
 			<task v-for='task in tasks' v-text='task.title'>
 
 			</task>
-		</ul>`
+		</ul>	`
 		,
 
 	data: function(){
