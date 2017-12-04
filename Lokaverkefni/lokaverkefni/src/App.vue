@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-
+    <h1 class="title is-2">Lokaverkefni Vefforritun</h1>
     <div id="newTaskHolder">
       <input type="text" class="input" v-model="title" placeholder="Bæta við Hlut">
 
       <div id="submitButton">
-        <button v-on:click="postTask" class="button is-link">Submit</button> 
+        <button v-on:click="postTask" class="button is-link">Submit</button>
       </div>
 
     </div>
@@ -16,7 +16,8 @@
 
       <h5 class="subtitle is-6 level-right">Uppfært: {{list.updated}}</h5>
       <div id="myCheckbox" v-on:click="checkTask" >
-        <input type="checkbox" id="checkBox" v-bind:value="list.id">
+        <label name="checkit">Completed</label>
+        <input type="checkbox" id="checkBox" v-bind:value="list.id" name="checkit">
       </div>   
     </div>  
   </div>
@@ -80,30 +81,66 @@ export default {
             title: this.title
          })
          .then(function(response) {
-            console.log(response);
+
 
          })
          .catch(function(error) {
             console.log(error);
          });
 
+        var self = this
+        setTimeout(function() {
+          self.makeTempElement()
+        },200)
+
       },
 
     checkCompleted: function() {
-      var self = this
-      for(var x = 0; self.lists.length; x++) {
+      var self = this;
+      for(var x = 0; x < self.lists.length; x++) {
         var theTask = self.lists[x].completed
-        console.log(theTask)
-        if(self.lists[x].completed == true) {
-          console.log("This is true");
-          document.getElementById("checkBox").checked === true;
+        var theCheck = document.getElementById("checkBox")
+        theCheck.setAttribute("id","check"+x)
+
+        if(theTask == true) {
+          document.getElementById("check"+x).checked = true;
         } else{
-          console.log("This is false");
-          document.getElementById("checkBox").checked === false;
+          document.getElementById("check"+x).checked = false;
         }
       }
+    },
+
+    makeTempElement: function() {
+      var mainDiv = document.createElement("div")
+
+      var h4 = document.createElement("h4")
+      h4.setAttribute("class","title name level-left")
+      h4.text = this.title
+      var h2 = document.createElement("h2")
+      h2.setAttribute("class", "subtitle company level-right")
+      h2.text = "Búið til: 1 sekúnda síðan"
+      var h5 = document.createElement("h5")
+      h5.setAttribute("class","subtitle is-6 level-right")
+      h5.text ="Uppfært: 1 sekúnda síðan"
+      var div = document.createElement("div")
+      var label = document.createElement("label")
+      var input = document.createElement("input")
+      div.setAttribute("id","myCheckbox")
+      label.setAttribute("name","checkit")
+      input.setAttribute("type","checkbox")
+      input.setAttribute("id","checkBox")
+      input.setAttribute("name","checkit")
+      div.appendChild(label)
+      div.appendChild(input)
+
+      mainDiv.appendChild(h4)
+      mainDiv.appendChild(h2)
+      mainDiv.appendChild(h5)
+      mainDiv.appendChild(div)
+      document.body.appendChild(mainDiv)
+
     }
-    }
+  }
 
   
 
@@ -125,8 +162,7 @@ body {
 }
 
 #myCheckbox {
-  width:5%;
-  cursor:pointer;
+  width:10%;
 }
 
 #newTaskHolder {
