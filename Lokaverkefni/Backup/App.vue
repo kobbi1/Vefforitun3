@@ -1,22 +1,23 @@
 <template>
   <div id="app">
     <h1 class="title is-2">Lokaverkefni Vefforritun</h1>
-    <div id="newTaskHolder"> 
+    <div id="newTaskHolder">
+      <input type="text" class="input" v-model="title" placeholder="Bæta við Hlut">
 
-      <TaskField></TaskField>
+      <div id="submitButton">
+        <button v-on:click="postTask" class="button is-link">Submit</button>
+      </div>
 
     </div>
 
-    <div id="newTasks">
-      
-    </div>
     <div v-for="list in lists" class="box is-primary">
       <h4 class="title name level-left" v-bind:class="{completedTask:list.completed}">Hvað á að gera: {{list.title}}</h4>
       <h2 class="subtitle company level-right" >Búið til: {{list.created}}</h2>
 
       <h5 class="subtitle is-6 level-right">Uppfært: {{list.updated}}</h5>
       <div id="myCheckbox" v-on:click="checkTask" >
-        <input type="checkbox" id="checkBox" v-bind:value="list.id">
+        <label name="checkit">Completed</label>
+        <input type="checkbox" id="checkBox" v-bind:value="list.id" name="checkit">
       </div>   
     </div>  
   </div>
@@ -25,9 +26,8 @@
 <script>
 
 import axios from "axios";
-import TaskField from "./Components/TaskField.vue"
+
 export default {
-  components: {TaskField},
 
   data () {
     return {
@@ -76,8 +76,26 @@ export default {
          });
       },
 
+    postTask: function() {
+       axios.post('http://fjolbraut.org/api/tasks?api_token=uhcuwuM1yyu8faO1QADPLToKPmHS9s4YcEtFGic7fDqEVhk5fWKCJED8Ovn5', {
+            title: this.title
+         })
+         .then(function(response) {
 
-    checkCompleted: function(event) {
+
+         })
+         .catch(function(error) {
+            console.log(error);
+         });
+
+        var self = this
+        setTimeout(function() {
+          self.makeTempElement()
+        },200)
+
+      },
+
+    checkCompleted: function() {
       var self = this;
       for(var x = 0; x < self.lists.length; x++) {
         var theTask = self.lists[x].completed
@@ -91,6 +109,37 @@ export default {
         }
       }
     },
+
+    makeTempElement: function() {
+      var mainDiv = document.createElement("div")
+
+      var h4 = document.createElement("h4")
+      h4.setAttribute("class","title name level-left")
+      h4.text = this.title
+      var h2 = document.createElement("h2")
+      h2.setAttribute("class", "subtitle company level-right")
+      h2.text = "Búið til: 1 sekúnda síðan"
+      var h5 = document.createElement("h5")
+      h5.setAttribute("class","subtitle is-6 level-right")
+      h5.text ="Uppfært: 1 sekúnda síðan"
+      var div = document.createElement("div")
+      var label = document.createElement("label")
+      var input = document.createElement("input")
+      div.setAttribute("id","myCheckbox")
+      label.setAttribute("name","checkit")
+      input.setAttribute("type","checkbox")
+      input.setAttribute("id","checkBox")
+      input.setAttribute("name","checkit")
+      div.appendChild(label)
+      div.appendChild(input)
+
+      mainDiv.appendChild(h4)
+      mainDiv.appendChild(h2)
+      mainDiv.appendChild(h5)
+      mainDiv.appendChild(div)
+      document.body.appendChild(mainDiv)
+
+    }
   }
 
   
@@ -103,7 +152,6 @@ export default {
 body {
   text-align:center;
   padding:20px;
-
 }
 
 .input {
@@ -115,7 +163,6 @@ body {
 
 #myCheckbox {
   width:10%;
-  float:right;
 }
 
 #newTaskHolder {
@@ -124,9 +171,5 @@ body {
 
 #submitButton {
   margin-top:10px;
-}
-
-#newTasks {
-  padding-bottom:25px;
 }
 </style>
